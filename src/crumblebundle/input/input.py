@@ -1,22 +1,24 @@
 import contextlib
+from pprint import pprint
+
+from .keycodes import KeyCodes, RawInput
+
 try:
     import msvcrt
+
     WINDOWS = True
 except ImportError:
     import sys
     import tty
     import termios
+
     WINDOWS = False
-
-from pprint import pprint
-
-from .keycodes import KeyCodes, RawInput
 
 
 def _build_tree(key):
     tree = {}
     for value in KeyCodes.__dict__.values():
-        code = list(reversed(getattr(value, key, '')))
+        code = list(reversed(getattr(value, key, "")))
         if not code:
             continue
 
@@ -27,7 +29,7 @@ def _build_tree(key):
                 node = node.setdefault(c, {})
             else:
                 if c in node:
-                    raise ValueError('duplicate keycodes {} {}'.format(value, node[c]))
+                    raise ValueError("duplicate keycodes {} {}".format(value, node[c]))
                 node[c] = value
                 break
     return tree
@@ -43,16 +45,15 @@ def get_char_wrap(get_char):
         while isinstance(node, dict):
             node = node[get_char(1)]
         return node
+
     return inner
 
 
 if WINDOWS:
-    _tree = _build_tree('_windows')
-
+    _tree = _build_tree("_windows")
 
     def _getch(number):
-        return ''.join(msvcrt.getwch() for _ in range(number))
-
+        return "".join(msvcrt.getwch() for _ in range(number))
 
     @contextlib.contextmanager
     def raw_prompt():
@@ -60,8 +61,10 @@ if WINDOWS:
             yield get_char_wrap(_getch)
         finally:
             pass
+
+
 else:
-    _tree = _build_tree('_unix')
+    _tree = _build_tree("_unix")
 
     @contextlib.contextmanager
     def raw_prompt():

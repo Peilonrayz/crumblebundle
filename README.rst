@@ -8,7 +8,7 @@ CrumbleBundle
 About
 -----
 
-This is a skeleton project to have a standardized and concrete base for all projects.
+Bundle `cookiecutter <https://github.com/cookiecutter/cookiecutter>`_ crumbs.
 
 Installation
 ------------
@@ -37,4 +37,4 @@ To run all tests run ``nox``. No venv is needed; nox makes all of them for us.
 License
 -------
 
-crumblebundle is available under the MIT license.
+CrumbleBundle is available under the MIT license.

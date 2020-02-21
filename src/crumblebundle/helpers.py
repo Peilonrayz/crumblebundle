@@ -1,8 +1,8 @@
-import re
 import copy
+import re
 import warnings
 
-DICT_KEY_SPLIT = re.compile(r'(?<!\\)\.')
+DICT_KEY_SPLIT = re.compile(r"(?<!\\)\.")
 _SENTINEL = object()
 
 
@@ -13,7 +13,7 @@ class Dict:
 
     @classmethod
     def _escape_key(cls, key):
-        return key.replace('.', r'\.')
+        return key.replace(".", r"\.")
 
     @classmethod
     def get(cls, obj, key, default=_SENTINEL):
@@ -22,7 +22,7 @@ class Dict:
         for i, k in keys:
             if k not in node:
                 if default is _SENTINEL:
-                    raise KeyError("{} doesn't exist".format('.'.join(keys[:i])))
+                    raise KeyError("{} doesn't exist".format(".".join(keys[:i])))
                 else:
                     return default
             node = node[k]
@@ -47,7 +47,7 @@ class Dict:
                 break
             node = node[k]
             if not isinstance(node, dict):
-                raise TypeError('{} is not a dictionary'.format('.'.join(keys[:i])))
+                raise TypeError("{} is not a dictionary".format(".".join(keys[:i])))
 
         node = obj
         for k in keys:
@@ -62,7 +62,7 @@ class Dict:
                 itered = False
                 for nested in cls.keys(value):
                     itered = True
-                    yield key + '.' + nested
+                    yield key + "." + nested
 
                 if not itered:
                     yield key
@@ -76,8 +76,8 @@ class Dict:
             if key not in obj:
                 pass
             elif isinstance(value, dict) != isinstance(obj[key], dict):
-                path = '.'.join(cls._escape_key(k) for k in keys)
-                raise ValueError('{path} type mismatch'.format(path=path))
+                path = ".".join(cls._escape_key(k) for k in keys)
+                raise ValueError("{path} type mismatch".format(path=path))
             else:
                 cls._merge_check(obj[key], value, keys)
 
@@ -91,5 +91,5 @@ class Dict:
             elif isinstance(value, dict):
                 cls.merge(obj[key], value)
             else:
-                warnings.warn('Two crumbles are setting to the same path')
+                warnings.warn("Two crumbles are setting to the same path")
                 obj[key] = value

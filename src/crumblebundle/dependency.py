@@ -1,15 +1,13 @@
 import collections
 import functools
 
-from .base_input import ReqInput, Input
-from .helpers import Dict
-
-
 from jinja2 import Environment
 
+from .base_input import Input, ReqInput
+from .helpers import Dict
 
-PartialNode = collections.namedtuple('PartialNode', 'path fn tags extensions')
-Node = collections.namedtuple('Node', 'path fn tags supplies requires')
+PartialNode = collections.namedtuple("PartialNode", "path fn tags extensions")
+Node = collections.namedtuple("Node", "path fn tags supplies requires")
 
 
 class MockDict(collections.defaultdict):
@@ -40,7 +38,7 @@ class Dependency:
 
     def build_functions(self):
         fns = []
-        extensions = set(self.config.get('_extensions', []))
+        extensions = set(self.config.get("_extensions", []))
         env = Environment(extensions=list(extensions))
         for (path, fn, tags, exts) in self.building.fns:
             if exts:
@@ -49,11 +47,13 @@ class Dependency:
                     extensions.update(exts)
                     env = Environment(extensions=list(extensions))
             requirements = MockDict()
-            supplies = list(Dict.keys(fn.__wrapped__(ReqInput(requirements, self.config, env))))
+            supplies = list(
+                Dict.keys(fn.__wrapped__(ReqInput(requirements, self.config, env)))
+            )
             requirements = list(Dict.keys(requirements))
             fns.append(Node(path, fn, tags, supplies, requirements))
         if extensions:
-            self.config['_extensions'] = list(extensions)
+            self.config["_extensions"] = list(extensions)
         return fns, env
 
     def run(self):
@@ -62,10 +62,12 @@ class Dependency:
             for fn in self.fns:
                 output = fn.fn(instance)
                 Dict.merge(instance.cookiecutter, output)
-            if '_copy_without_render' in self.config:
-                instance.cookiecutter['_copy_without_render'] = self.config['_copy_without_render']
-            if '_extensions' in self.config:
-                instance.cookiecutter['_extensions'] = self.config['_extensions']
+            if "_copy_without_render" in self.config:
+                instance.cookiecutter["_copy_without_render"] = self.config[
+                    "_copy_without_render"
+                ]
+            if "_extensions" in self.config:
+                instance.cookiecutter["_extensions"] = self.config["_extensions"]
             return instance
         except KeyboardInterrupt:
             raise KeyboardInterrupt() from None  # Clean traceback
@@ -80,6 +82,7 @@ class BuildingDependency:
         @functools.wraps(fn)
         def inner(instance):
             return fn(instance.input)
+
         self.fns.append(PartialNode(path, inner, tags, extensions))
 
     def build(self, config):
